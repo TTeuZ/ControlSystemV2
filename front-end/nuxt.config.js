@@ -6,8 +6,8 @@ export default {
   ** Headers of the page
   */
   head: {
-    titleTemplate: '%s - ' + process.env.npm_package_name,
-    title: process.env.npm_package_name || '',
+    titleTemplate: '',
+    title: 'PLK Controle',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -41,6 +41,26 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
+    [
+      '@nuxtjs/firebase',
+      {
+        config: {
+          apiKey: 'AIzaSyDXfAUxRFjM8slyu1WMSmzLLdksiC03EhY',
+          authDomain: 'plk-manutencao-backend.firebaseapp.co',
+          projectId: 'plk-manutencao-backend',
+          storageBucket: 'plk-manutencao-backend.appspot.com',
+          messagingSenderId: '491836340989',
+          appId: '1:491836340989:web:e01fdcd64570864582dc94',
+        },
+        services: {
+          auth: true,
+          firestore: true,
+          functions: true,
+          storage: true,
+          database: true, 
+        }
+      }
+    ]
   ],
   /*
   ** vuetify module configuration
@@ -49,7 +69,7 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: true,
+      dark: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,

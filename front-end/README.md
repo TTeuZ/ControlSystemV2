@@ -1,6 +1,6 @@
 # front-end
 
-> Plk-manutenção 2.0
+> My ultimate Nuxt.js project
 
 ## Build Setup
 

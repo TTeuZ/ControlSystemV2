@@ -1,7 +1,7 @@
 {
   "name": "front-end",
   "version": "1.0.0",
-  "description": "My ultimate Nuxt.js project",
+  "description": "My sweet Nuxt.js project",
   "author": "Paulo Mateus",
   "private": true,
   "scripts": {
@@ -13,8 +13,7 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
-    "@nuxtjs/firebase": "^7.5.0",
-    "firebase": "^8.3.3",
+    "firebase": "^8.4.1",
     "nuxt": "^2.0.0"
   },
   "devDependencies": {
@@ -23,6 +22,9 @@
     "@nuxtjs/eslint-module": "^1.0.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.1.0",
-    "eslint-plugin-nuxt": ">=0.4.2"
+    "eslint-plugin-nuxt": ">=0.4.2",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1"
   }
 }

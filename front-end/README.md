@@ -1,6 +1,6 @@
 # front-end
 
-> My ultimate Nuxt.js project
+> My sweet Nuxt.js project
 
 ## Build Setup
 

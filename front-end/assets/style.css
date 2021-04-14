@@ -1,0 +1,10 @@
+html {
+    scroll-behavior: smooth;
+}
+
+@font-face {
+    font-family: 'Exo Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Exo-Regular'), url('exo/Exo-Regular.woff') format('woff');
+}

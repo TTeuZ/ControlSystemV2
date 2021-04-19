@@ -1,13 +1,13 @@
 <template>
-  <v-container fluid> </v-container>
+  <v-row
+    :class="{ positionsExpanded: $store.state.drawer == true ? true : false }"
+    class="pa-0 ma-0 positions"
+  ></v-row>
 </template>
 
 <script>
 import firebase from 'firebase'
-import { database } from '~/plugins/firebase.js'
-export default {
-  middleware: 'auth'
-}
+export default {}
 </script>
 
 <style scoped>

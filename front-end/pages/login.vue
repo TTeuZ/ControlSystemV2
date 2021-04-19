@@ -37,7 +37,18 @@ export default {
       password: ''
     }
   },
+  mounted() {
+    window.addEventListener('keydown', this.loginWithEnter)
+  },
+  destroyed() {
+    window.removeEventListener('keydown', this.loginWithEnter)
+  },
   methods: {
+    loginWithEnter(e) {
+      if (e.code === 'Enter') {
+        this.login()
+      }
+    },
     login() {
       this.$store
         .dispatch('signInWithEmail', {

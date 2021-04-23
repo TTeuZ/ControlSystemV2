@@ -8,7 +8,7 @@
         <v-col class="buttons" cols="6">
           <NewItem />
           <Log />
-          <v-switch @click="changeEdit()" label="Edição total?" />
+          <v-switch label="Edição total?" @click="changeEdit()" />
         </v-col>
         <v-col cols="6">
           <v-text-field
@@ -31,7 +31,7 @@
         <template v-slot:item.action="{ item }">
           <div class="actions">
             <UpdateItem ref="updateItem" :item="item" />
-            <v-icon medium color="error" @click="deletaItem(item)">
+            <v-icon medium color="error" @click="delItem(item)">
               mdi-delete
             </v-icon>
             <v-menu right close-on-click>
@@ -85,7 +85,8 @@ export default {
         { text: 'Tipo', value: 'tipo' },
         { text: '', value: 'action', align: 'right', sortable: false }
       ],
-      isFullEdit: false
+      isFullEdit: false,
+      colors: ['Verde', 'Amarelo', 'Vermelho']
     }
   },
   watch: {
@@ -98,6 +99,9 @@ export default {
         item.quantidade = itens[i].quantidade
         item.quantidade_min = itens[i].quantidade_min
         item.tipo = itens[i].tipo
+        item.color = itens[i].color
+        item.createdAt = itens[i].createdAt
+        item.userCreated = itens[i].userCreated
         this.estoque.push(item)
       }
     }
@@ -109,6 +113,14 @@ export default {
   methods: {
     changeEdit() {
       this.$refs.updateItem.fullEdit = !this.$refs.updateItem.fullEdit
+    },
+    delItem(item) {
+      const ok = window.confirm('Voce realmente deseja deletar este item?')
+      if (ok) database.child('estoque-item/' + item.id).remove()
+    },
+    updatePriorit(color, id) {
+      const item = database.child('estoque-item/' + id + '/color')
+      item.set(color)
     }
   }
 }
@@ -136,5 +148,14 @@ export default {
   flex-flow: row;
   justify-content: flex-end;
   align-items: center;
+}
+.Verde {
+  background-color: lightgreen !important;
+}
+.Vermelho {
+  background-color: rgb(235, 57, 57) !important;
+}
+.Amarelo {
+  background-color: rgb(240, 240, 50) !important;
 }
 </style>

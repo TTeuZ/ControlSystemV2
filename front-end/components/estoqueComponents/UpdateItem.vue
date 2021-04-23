@@ -23,7 +23,6 @@
               :rules="[(v) => !!v || 'Campo Obrigatório']"
               color="cyan darken-2"
               label=" Quantidade"
-              :disabled="!fullEdit"
             />
             <v-text-field
               v-model="attItem.quantidade_min"
@@ -31,6 +30,7 @@
               :rules="[(v) => !!v || 'Campo Obrigatório']"
               color="cyan darken-2"
               label=" Minimo"
+              :disabled="!fullEdit"
             />
             <v-select
               v-model="attItem.tipo"
@@ -88,8 +88,44 @@ export default {
         .child('estoque-item/' + this.item.id)
         .set(this.attItem)
         .then(() => {
+          if (!this.fullEdit) {
+            this.putInLog()
+          } else {
+            this.attLogInfo()
+          }
           this.close()
         })
+    },
+    putInLog() {
+      const data = database.child('estoque-log')
+      const newLog = {
+        name: this.attItem.name,
+        userCreated: this.attItem.userCreated,
+        quantidade: this.attItem.quantidade,
+        itemId: this.attItem.id
+      }
+      this.putDate(newLog)
+      newLog.userUpdated = this.$store.state.user.displayName
+      data.push().set(newLog)
+    },
+    putDate(log) {
+      const data = new Date()
+      const time = data.toString().split(' ')[4]
+      const day = data.getDay().toString()
+      const month = (data.getMonth() + 1).toString()
+      const year = data.getFullYear().toString()
+      const fullDate = day + '/' + month + '/' + year + ' ' + time
+      log.updatedAt = fullDate
+    },
+    attLogInfo() {
+      let atualizacoes = []
+      const log = database.child('estoque-log')
+      log.on('value', (snap) => (atualizacoes = snap.val()))
+      for (const i in atualizacoes) {
+        if (atualizacoes[i].itemId = this.item.id) {
+          database.child('estoque-log/' + i + '/name').set(this.attItem.name)
+        }
+      }
     },
     close() {
       this.modal = false

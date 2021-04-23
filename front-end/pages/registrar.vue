@@ -18,13 +18,6 @@
           <v-col cols="12">
             <v-text-field v-model="password" label="Senha" />
           </v-col>
-          <v-col cols="12">
-            <v-select
-              v-model="isAdmin"
-              :items="items"
-              label="É administrador?"
-            />
-          </v-col>
         </v-row>
         <v-btn text @click="signUp()"> Cadastrar </v-btn>
       </v-col>
@@ -37,11 +30,9 @@ import firebase from 'firebase'
 export default {
   data() {
     return {
-      isAdmin: '',
       name: '',
       email: '',
-      password: '',
-      items: ['Sim', 'Não']
+      password: ''
     }
   },
   mounted() {
@@ -66,10 +57,7 @@ export default {
         })
     },
     clearForm() {
-      ;(this.email = ''),
-        (this.password = ''),
-        (this.isAdmin = ''),
-        (this.name = '')
+      ;(this.email = ''), (this.password = ''), (this.name = '')
     }
   }
 }

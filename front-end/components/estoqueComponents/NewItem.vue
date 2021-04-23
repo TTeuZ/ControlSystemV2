@@ -62,13 +62,18 @@ export default {
         name: '',
         quantidade: '',
         quantidade_min: '',
-        tipo: ''
+        tipo: '',
+        color: '',
+        createdAt: '',
+        userCreated: ''
       },
       tipes: ['Lacre', 'Cabo']
     }
   },
   methods: {
     criaItem() {
+      this.getDate()
+      this.newItem.userCreated = this.$store.state.user.displayName
       database
         .child('estoque-item')
         .push()
@@ -76,6 +81,15 @@ export default {
         .then(() => {
           this.close()
         })
+    },
+    getDate() {
+      const data = new Date()
+      const time = data.toString().split(' ')[4]
+      const day = data.getDay().toString()
+      const month = (data.getMonth() + 1).toString()
+      const year = data.getFullYear().toString()
+      const fullDate = day + '/' + month + '/' + year + ' ' + time
+      this.newItem.createdAt = fullDate
     },
     close() {
       this.modal = false

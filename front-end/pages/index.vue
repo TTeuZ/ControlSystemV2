@@ -6,7 +6,7 @@
 import firebase from 'firebase'
 import { database } from '~/plugins/firebase.js'
 export default {
-  middleware: 'auth'
+  // middleware: 'auth'
 }
 </script>
 

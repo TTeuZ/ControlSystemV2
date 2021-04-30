@@ -1,84 +1,71 @@
 <template>
   <v-app class="ma-0 pa-0">
-    <div
-      :class="{ navBarExpanded: $store.state.drawer == true ? true : false }"
-      class="nav-bar"
-    >
-      <div>
-        <div class="nav-header">
-          <v-app-bar-nav-icon
-            class="navigation"
-            @click="$store.state.drawer = !$store.state.drawer"
-          />
-          <span v-if="this.$store.state.drawer" class="text">Controle</span>
-        </div>
-        <div class="links">
-          <v-list dense style="width: 100%">
-            <div v-for="(drw, d) in drwItens" :key="drw">
-              <v-list-item class="pl-1 pr-0">
-                <v-list-item-content>
-                  <v-list-item-title class="item-drawer" @click="selected = d">
-                    <nuxt-link
-                      :class="{
-                        navItemPermanent: selected === d ? true : false
-                      }"
-                      class="link-text"
-                      :to="drw.link"
-                    >
-                      <v-icon
-                        :class="{
-                          iconPermanent: selected === d ? true : false
-                        }"
-                        class="icon"
-                      >
-                        {{ drw.icon }}
-                      </v-icon>
-                      <span v-if="$store.state.drawer">
-                        {{ drw.label }}
-                      </span>
-                    </nuxt-link>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </div>
-            <v-list-item v-if="isAdmin" class="pl-1 pr-0">
+    <v-card>
+      <v-navigation-drawer class="navi" :mini-variant.sync="mini" app permanent>
+        <div>
+          <v-list>
+            <v-list-item class="px-2">
+              <v-list-item-avatar>
+                <v-img :src="user.photoURL"></v-img>
+              </v-list-item-avatar>
+              <v-spacer />
+              <v-btn icon @click.stop="mini = !mini">
+                <v-icon>mdi-chevron-left</v-icon>
+              </v-btn>
+            </v-list-item>
+            <v-list-item link>
               <v-list-item-content>
-                <v-list-item-title class="item-drawer" @click="selected = 10">
-                  <nuxt-link
-                    :class="{
-                      navItemPermanent: selected === 10 ? true : false
-                    }"
-                    class="link-text"
-                    to="/registrar"
-                  >
-                    <v-icon
-                      :class="{
-                        iconPermanent: selected === 10 ? true : false
-                      }"
-                      class="icon"
+                <v-list-item-title class="title">
+                  {{ user.displayName }}
+                </v-list-item-title>
+                <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+          <v-divider></v-divider>
+          <v-list nav dense>
+            <v-list-item v-for="item in drwItens" :key="item" link>
+              <nuxt-link class="links" :to="item.link">
+                <v-list-item-icon>
+                  <v-icon class="icon">{{ item.icon }}</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title class="text">{{
+                  item.label
+                }}</v-list-item-title>
+              </nuxt-link>
+            </v-list-item>
+            <v-list-item v-if="isAdmin">
+              <v-list-item-content>
+                <v-list-item-title class="item-drawer">
+                  <nuxt-link class="links" to="/registrar">
+                    <v-list-item-icon>
+                      <v-icon class="icon">mdi-account-box-outline</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title class="text"
+                      >Registrar</v-list-item-title
                     >
-                      mdi-account-box-outline
-                    </v-icon>
-                    <span v-if="$store.state.drawer">Registrar</span>
                   </nuxt-link>
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
         </div>
-      </div>
-      <v-btn
-        v-if="$store.state.drawer"
-        class="exit"
-        text
-        color="#ec6f3d"
-        label="login"
-        @click="exit()"
-      >
-        sair
-      </v-btn>
-    </div>
-    <nuxt class="nuxt" />
+        <div class="btn">
+          <v-btn
+            class="exit"
+            text
+            color="#ec6f3d"
+            label="login"
+            @click="exit()"
+          >
+            sair
+          </v-btn>
+        </div>
+      </v-navigation-drawer>
+    </v-card>
+    <v-main>
+      <nuxt />
+    </v-main>
   </v-app>
 </template>
 
@@ -89,6 +76,9 @@ export default {
     return {
       selected: '',
       isAdmin: false,
+      drawer: false,
+      mini: true,
+      user: {},
       drwItens: [
         {
           label: 'Home',
@@ -121,6 +111,8 @@ export default {
     }
   },
   mounted() {
+    this.user = this.$store.state.user
+    console.log(this.user)
     if (this.$store.state.user.email === 'admin@admin.com') this.isAdmin = true
   },
   methods: {
@@ -140,60 +132,25 @@ export default {
 </script>
 
 <style scoped>
-.nuxt {
-  position: absolute;
-  transition: 1s;
-}
-.nav-bar {
-  height: 100%;
-  width: 45px;
-  border-right: #777 1px solid;
-  -webkit-box-shadow: 9px 0px 10px 1px rgba(0, 0, 0, 0.1);
-  box-shadow: 9px 0px 10px 1px rgba(0, 0, 0, 0.1);
+.navi >>> .v-navigation-drawer__content {
   display: flex;
   flex-flow: column;
   justify-content: space-between;
-  transition: 1s;
-  position: fixed;
 }
-.nav-header {
-  height: 50px;
-  width: 100%;
+.btn {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.navBarExpanded {
-  width: 225px !important;
-  transition: 1s;
-}
-.navigation {
-  justify-content: flex-end;
-  padding-right: 2px;
+  justify-content: center;
+  margin-bottom: 35px;
 }
 .text {
-  font-size: 16px;
+  font-size: 14px !important;
   font-family: 'Exo Regular';
-  margin-right: 15px;
-  transition: 1s;
-  transition-timing-function: ease-in-out;
-  transition-property: all;
-}
-.link-text {
-  text-decoration: none;
-  font-size: 16px;
-  font-family: 'Exo Regular';
-  color: black;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-right: 15px;
 }
 .navItemPermanent {
   color: orange;
 }
 .icon {
-  font-size: 2em;
+  font-size: 1.8em;
   color: black;
 }
 .iconPermanent {
@@ -202,10 +159,9 @@ export default {
 }
 .links {
   display: flex;
-  justify-content: flex-start;
-  margin-top: 50px;
-}
-.exit {
-  margin-bottom: 30px;
+  flex-flow: row;
+  text-decoration: none;
+  color: black;
+  font-family: 'Exo Regular';
 }
 </style>

@@ -63,12 +63,15 @@ export default {
     item: {
       type: Object,
       required: true
+    },
+    fullEdit: {
+      type: Boolean,
+      required: true
     }
   },
   data() {
     return {
       modal: false,
-      fullEdit: false,
       attItem: {
         name: '',
         quantidade: '',
@@ -122,7 +125,7 @@ export default {
       const log = database.child('estoque-log')
       log.on('value', (snap) => (atualizacoes = snap.val()))
       for (const i in atualizacoes) {
-        if (atualizacoes[i].itemId = this.item.id) {
+        if ((atualizacoes[i].itemId = this.item.id)) {
           database.child('estoque-log/' + i + '/name').set(this.attItem.name)
         }
       }

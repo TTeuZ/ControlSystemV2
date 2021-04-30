@@ -1,14 +1,15 @@
 <template>
-  <v-row
-    :class="{ positionsExpanded: $store.state.drawer == true ? true : false }"
-    class="pa-0 ma-0 positions"
-  >
-    <v-col cols="12" class="header">
+  <v-row class="pa-0 ma-0">
+    <v-col cols="12" class="header pb-0">
+      <span class="header-title">ESTOQUE</span>
+      <v-divider color="black"></v-divider>
+    </v-col>
+    <v-col class="pt-0" cols="12">
       <v-row class="ma-0 pa-0">
         <v-col class="buttons" cols="6">
           <NewItem />
           <Log />
-          <v-switch label="Edição total?" @click="changeEdit()" />
+          <v-switch label="Edição total?" @click="isFullEdit = !isFullEdit" />
         </v-col>
         <v-col cols="6">
           <v-text-field
@@ -30,7 +31,7 @@
       >
         <template v-slot:item.action="{ item }">
           <div class="actions">
-            <UpdateItem ref="updateItem" :item="item" />
+            <UpdateItem :full-edit="isFullEdit" :item="item" />
             <v-icon medium color="error" @click="delItem(item)">
               mdi-delete
             </v-icon>
@@ -111,9 +112,6 @@ export default {
     data.on('value', (snap) => (this.estoqueItens = snap.val()))
   },
   methods: {
-    changeEdit() {
-      this.$refs.updateItem.fullEdit = !this.$refs.updateItem.fullEdit
-    },
     delItem(item) {
       const ok = window.confirm('Voce realmente deseja deletar este item?')
       if (ok) database.child('estoque-item/' + item.id).remove()
@@ -127,16 +125,13 @@ export default {
 </script>
 
 <style scoped>
-.positions {
-  position: absolute;
-  left: 60px !important;
-  transition: 1s;
-  width: 95%;
+.header {
+  padding: 20px;
+  margin-bottom: 0px;
 }
-.positionsExpanded {
-  left: 240px !important;
-  width: 86% !important;
-  transition: 1s;
+.header-title {
+  font-family: "Exo Regular";
+  font-size: 40px;
 }
 .buttons {
   display: flex;

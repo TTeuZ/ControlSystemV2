@@ -4,8 +4,7 @@ import { auth } from '~/plugins/firebase.js'
 const createStore = () => {
   return new Vuex.Store({
     state: {
-      user: '',
-      drawer: false
+      user: ''
     },
     getters: {
       user(state) {

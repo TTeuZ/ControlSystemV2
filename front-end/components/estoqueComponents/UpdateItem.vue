@@ -107,18 +107,9 @@ export default {
         quantidade: this.attItem.quantidade,
         itemId: this.attItem.id
       }
-      this.putDate(newLog)
+      newLog.updatedAt = firebase.database.ServerValue.TIMESTAMP
       newLog.userUpdated = this.$store.state.user.displayName
       data.push().set(newLog)
-    },
-    putDate(log) {
-      const data = new Date()
-      const time = data.toString().split(' ')[4]
-      const day = data.getDay().toString()
-      const month = (data.getMonth() + 1).toString()
-      const year = data.getFullYear().toString()
-      const fullDate = day + '/' + month + '/' + year + ' ' + time
-      log.updatedAt = fullDate
     },
     attLogInfo() {
       let atualizacoes = []

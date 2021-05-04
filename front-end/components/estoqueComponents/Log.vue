@@ -26,7 +26,7 @@
                 <div class="log-item">
                   <span class="log-text"> Nome: {{ item.name }} </span>
                   <span class="log-text">
-                    {{ item.createdAt }}
+                    {{ getDate(item.createdAt) }}
                   </span>
                   <span class="log-text">
                     {{ item.userCreated }}
@@ -51,7 +51,7 @@
                 <div class="log-item">
                   <span class="log-text"> Nome: {{ item.name }} </span>
                   <span class="log-text">
-                    {{ item.updatedAt }}
+                    {{ getDate(item.updatedAt) }}
                   </span>
                   <span class="log-text">
                     {{ item.userUpdated }}
@@ -93,6 +93,18 @@ export default {
   methods: {
     getInfos() {
       this.modal = true
+    },
+    getDate(timestamp) {
+      const date = new Date(timestamp)
+      const realDate =
+        date.toLocaleDateString() +
+        ' ' +
+        date.getHours().toString() +
+        ':' +
+        date.getMinutes().toString() +
+        ':' +
+        date.getSeconds().toString()
+      return realDate
     }
   }
 }

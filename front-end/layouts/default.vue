@@ -112,7 +112,6 @@ export default {
   },
   mounted() {
     this.user = this.$store.state.user
-    console.log(this.user)
     if (this.$store.state.user.email === 'admin@admin.com') this.isAdmin = true
   },
   methods: {

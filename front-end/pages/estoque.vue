@@ -130,7 +130,7 @@ export default {
   margin-bottom: 0px;
 }
 .header-title {
-  font-family: "Exo Regular";
+  font-family: 'Exo Regular';
   font-size: 40px;
 }
 .buttons {

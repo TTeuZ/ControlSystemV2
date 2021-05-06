@@ -8,7 +8,7 @@
       </v-col>
       <v-col md="6" class="login-section">
         <div class="login-table">
-          <v-text-field v-model="email" label="Email" />
+          <v-text-field v-model="email" label="Email" suffix='@plkdobrasil.com.br' />
           <v-text-field
             v-model="password"
             label="Senha"
@@ -52,7 +52,7 @@ export default {
     login() {
       this.$store
         .dispatch('signInWithEmail', {
-          email: this.email,
+          email: this.email + '@plkdobrasil.com.br',
           password: this.password
         })
         .then(() => {

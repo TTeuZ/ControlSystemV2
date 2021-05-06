@@ -9,7 +9,7 @@
         <v-col class="buttons" cols="6">
           <NewItem />
           <Log />
-          <v-switch label="Edição total?" @click="isFullEdit = !isFullEdit" />
+          <v-switch label="Edição total?" :disabled="disabled" flat @click="isFullEdit = !isFullEdit" />
         </v-col>
         <v-col cols="6">
           <v-text-field
@@ -86,6 +86,7 @@ export default {
         { text: 'Tipo', value: 'tipo' },
         { text: '', value: 'action', align: 'right', sortable: false }
       ],
+      disabled: true,
       isFullEdit: false,
       colors: ['Verde', 'Amarelo', 'Vermelho']
     }
@@ -110,11 +111,19 @@ export default {
   mounted() {
     const data = database.child('estoque-item')
     data.on('value', (snap) => (this.estoqueItens = snap.val()))
+
+    if(this.$store.state.user.displayName === 'João' || this.$store.state.user.displayName === 'Paulo Mateus') {
+      this.disabled = false
+    }
   },
   methods: {
     delItem(item) {
-      const ok = window.confirm('Voce realmente deseja deletar este item?')
-      if (ok) database.child('estoque-item/' + item.id).remove()
+      if(this.$store.state.user.displayName === 'João' || this.$store.state.user.displayName === 'Paulo Mateus') {
+        const ok = window.confirm('Voce realmente deseja deletar este item?')
+        if (ok) database.child('estoque-item/' + item.id).remove()
+      } else {
+        window.alert('Vocẽ não tem permissão de excluir um Item')
+      }
     },
     updatePriorit(color, id) {
       const item = database.child('estoque-item/' + id + '/color')

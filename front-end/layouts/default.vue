@@ -112,7 +112,7 @@ export default {
   },
   mounted() {
     this.user = this.$store.state.user
-    if (this.$store.state.user.email === 'admin@admin.com') this.isAdmin = true
+    if (this.$store.state.user.email === 'admin@plkdobrasil.com.br') this.isAdmin = true
   },
   methods: {
     exit() {

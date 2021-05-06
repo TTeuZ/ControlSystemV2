@@ -8,7 +8,11 @@
       </v-col>
       <v-col md="6" class="login-section">
         <div class="login-table">
-          <v-text-field v-model="email" label="Email" suffix='@plkdobrasil.com.br' />
+          <v-text-field
+            v-model="email"
+            label="Email"
+            suffix="@plkdobrasil.com.br"
+          />
           <v-text-field
             v-model="password"
             label="Senha"

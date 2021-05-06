@@ -9,7 +9,12 @@
         <v-col class="buttons" cols="6">
           <NewItem />
           <Log />
-          <v-switch label="Edição total?" :disabled="disabled" flat @click="isFullEdit = !isFullEdit" />
+          <v-switch
+            label="Edição total?"
+            :disabled="disabled"
+            flat
+            @click="isFullEdit = !isFullEdit"
+          />
         </v-col>
         <v-col cols="6">
           <v-text-field
@@ -112,13 +117,19 @@ export default {
     const data = database.child('estoque-item')
     data.on('value', (snap) => (this.estoqueItens = snap.val()))
 
-    if(this.$store.state.user.displayName === 'João' || this.$store.state.user.displayName === 'Paulo Mateus') {
+    if (
+      this.$store.state.user.displayName === 'João' ||
+      this.$store.state.user.displayName === 'Paulo Mateus'
+    ) {
       this.disabled = false
     }
   },
   methods: {
     delItem(item) {
-      if(this.$store.state.user.displayName === 'João' || this.$store.state.user.displayName === 'Paulo Mateus') {
+      if (
+        this.$store.state.user.displayName === 'João' ||
+        this.$store.state.user.displayName === 'Paulo Mateus'
+      ) {
         const ok = window.confirm('Voce realmente deseja deletar este item?')
         if (ok) database.child('estoque-item/' + item.id).remove()
       } else {

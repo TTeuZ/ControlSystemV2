@@ -1,25 +1,32 @@
 <template>
-  <v-row
-    :class="{ positionsExpanded: $store.state.drawer == true ? true : false }"
-    class="pa-0 ma-0 positions"
-  ></v-row>
+  <v-row class="pa-0 ma-0">
+    <v-col cols="12" class="header pb-0">
+      <span class="header-title">FORNECEDORES</span>
+      <v-divider color="black"></v-divider>
+    </v-col>
+    <v-col class="pt-0" cols="12">
+      <Fornecedores />
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 import firebase from 'firebase'
-export default {}
+import Fornecedores from '../components/fornecedores/Fornecedor'
+export default {
+  components: {
+    Fornecedores
+  }
+}
 </script>
 
 <style scoped>
-.positions {
-  position: absolute;
-  left: 60px !important;
-  transition: 1s;
-  width: 95%;
+.header {
+  padding: 20px;
+  margin-bottom: 0px;
 }
-.positionsExpanded {
-  left: 240px !important;
-  width: 86% !important;
-  transition: 1s;
+.header-title {
+  font-family: 'Exo Regular';
+  font-size: 40px;
 }
 </style>

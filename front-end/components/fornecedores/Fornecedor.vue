@@ -65,12 +65,12 @@
         <v-expansion-panel-content class="expansion-panel pa-0">
           <div v-if="show">
             <div
-              v-for="(item, id) in fornecedorItems"
+              v-for="(item, i) in fornecedorItems"
               :key="item"
               class="fornecedor-itens-section"
             >
               <div
-                v-if="!(isEditItem === id)"
+                v-if="!(isEditItem === i)"
                 class="item-info"
                 @click="showOb(item.id, '0')"
               >
@@ -81,7 +81,7 @@
                 <span class="text text-value"> Valor: {{ item.valor }} </span>
                 <span class="text text-date"> Data: {{ item.data }} </span>
               </div>
-              <div v-if="isEditItem === id" style="width:100%;">
+              <div v-if="isEditItem === i" style="width:100%;">
                 <div class="att-form">
                   <v-select
                     v-model="attItemObj.nome"
@@ -141,13 +141,13 @@
                 <!-- eslint-disable-line -->
               </div>
               <div class="edit-icon-item">
-                <v-icon color="primary" @click="attItem(item.id)"
+                <v-icon color="primary" @click="attItem(index,i,item)"
                   >mdi-circle-edit-outline</v-icon
                 >
               </div>
             </div>
             <div v-if="limit" class="show-more-section">
-              <span class="show-text" @click="showAll(index, index)"
+              <span class="show-text" @click="showAll(index, id)"
                 >Mostrar mais</span
               >
             </div>
@@ -334,6 +334,27 @@ export default {
     fornItens.on('value', (snap) => (this.fornecedoresItems = snap.val()))
   },
   methods: {
+    filterFornecedores() {
+      let count = 0
+      let fornecedoresId = []
+      const fornUti = this.fornecedores
+      // for(const fornecedor in this.fornecedoresItems) {
+      //   for(const fornecedorItems in this.fornecedoresItems[fornecedor]) {
+      //     if (this.fornecedoresItems[fornecedor][fornecedorItems].nome.toLowerCase().includes(this.search.toLowerCase())) {
+            
+      //     }
+      //   }
+      // }
+      // fornecedoresId = fornecedoresId.filter((atual, posterior) => {
+      //   return fornecedoresId.indexOf(atual) === posterior
+      // })
+      // while(count <= fornecedoresId.length - 1) {
+      //   for (const forn in fornUti) {
+      //   }
+      //   count += 1
+      // }
+      console.log(fornUti)
+    },
     createFornecedor() {
       if (!this.isCreate) {
         this.isCreate = true
@@ -378,6 +399,7 @@ export default {
           this.show = true
           for(const item in this.fornecedoresItems[fornecedor]) {
             if (this.fornecedorItems.length < 3) {
+              this.fornecedoresItems[fornecedor][item].id = item
               this.fornecedorItems.push(this.fornecedoresItems[fornecedor][item])
             } else {
               this.limit = true
@@ -385,12 +407,10 @@ export default {
           }
         }
       }
-      console.log(this.fornecedorItems.length)
     },
     addItem(id) {
       if (!this.isAdd) {
         this.isAdd = true
-        console.log(this.estoque)
         for(const i in this.estoque) {
           this.estoqueItems.push(this.estoque[i].name)
         }
@@ -404,9 +424,25 @@ export default {
         })
       }
     },
+    attItem(fornId, arrayIndex, item) {
+      if(this.isEditItem !== arrayIndex) {
+        this.isEditItem = arrayIndex
+        this.attItemObj = item
+        for(const i in this.estoque) {
+          this.estoqueItems.push(this.estoque[i].name)
+        }
+      } else {
+        const itemId = item.id
+        const update = this.attItemObj
+        delete update.id
+        database.child('fornecedor-item/' + fornId + '/' + itemId).set(update).then(() => {
+          this.attItemObj = {}
+          this.isEditItem = ''
+        })
+      }
+    },
     setData(data) {
       this.newItem.data = data.split(' ')[0].split('-').reverse().join('/') /*eslint-disable-line*/
-    //   this.attItemObj.data = data.split(' ')[0].split('-').reverse().join('/') /*eslint-disable-line*/
     },
   }
 }

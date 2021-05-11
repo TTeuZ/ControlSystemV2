@@ -72,7 +72,7 @@
               <div
                 v-if="!(isEditItem === i)"
                 class="item-info"
-                @click="showOb(item.id, '0')"
+                @click="showOb(index, item.id)"
               >
                 <span class="text text-name"> Item: {{ item.nome }} </span>
                 <span class="text text-quant">
@@ -141,13 +141,13 @@
                 <!-- eslint-disable-line -->
               </div>
               <div class="edit-icon-item">
-                <v-icon color="primary" @click="attItem(index,i,item)"
+                <v-icon color="primary" @click="attItem(index, i, item)"
                   >mdi-circle-edit-outline</v-icon
                 >
               </div>
             </div>
             <div v-if="limit" class="show-more-section">
-              <span class="show-text" @click="showAll(index, id)"
+              <span class="show-text" @click="showAll(index)"
                 >Mostrar mais</span
               >
             </div>
@@ -276,13 +276,21 @@
         </v-btn>
       </div>
     </v-expansion-panels>
+    <ObDialog :ob-dialog="obDialog" :ob-item="obItem" />
+    <ShowAllDialog :forn-items="ShowAllItems" :show="showAllDialog" />
   </div>
 </template>
 
 <script>
 import firebase from 'firebase'
+import ObDialog from '../fornecedores/ObDialog'
+import ShowAllDialog from '../fornecedores/ShowAllDialog'
 import { database } from '~/plugins/firebase.js'
 export default {
+  components: {
+    ObDialog,
+    ShowAllDialog
+  },
   data() {
     return {
       show: false,
@@ -292,6 +300,10 @@ export default {
       isEdit: '',
       isEditItem: '',
       isAdd: false,
+      obDialog: false,
+      obItem: {},
+      showAllDialog: false,
+      ShowAllItems: {},
       fornecedores: {},
       fornItens: {},
       estoque: {},
@@ -335,13 +347,13 @@ export default {
   },
   methods: {
     filterFornecedores() {
-      let count = 0
-      let fornecedoresId = []
+      const count = 0
+      const fornecedoresId = []
       const fornUti = this.fornecedores
       // for(const fornecedor in this.fornecedoresItems) {
       //   for(const fornecedorItems in this.fornecedoresItems[fornecedor]) {
       //     if (this.fornecedoresItems[fornecedor][fornecedorItems].nome.toLowerCase().includes(this.search.toLowerCase())) {
-            
+
       //     }
       //   }
       // }
@@ -365,42 +377,52 @@ export default {
           telefone: this.newFornecedor.telefone
         }
         database
-        .child('fornecedor')
-        .push()
-        .set(fornecedor)
-        .then(() => {
+          .child('fornecedor')
+          .push()
+          .set(fornecedor)
+          .then(() => {
             this.newFornecedor = {}
             this.isCreate = false
-        })
+          })
       }
     },
-     attFornecedor(id) {
+    attFornecedor(id) {
       if (this.isEdit !== id) {
         this.isEdit = id
         let selected = {}
-        firebase.database().ref('fornecedor/' + id).on('value', (snap) => (selected = snap.val()))
+        firebase
+          .database()
+          .ref('fornecedor/' + id)
+          .on('value', (snap) => (selected = snap.val()))
         this.attFornecedorObj = selected
       } else {
         const update = this.attFornecedorObj
-        database.child('fornecedor/' + id).set(update).then(() => {
-          this.attFornecedorObj = {}
-          this.isEdit = ''
-          this.canEdit = ''
-        })
+        database
+          .child('fornecedor/' + id)
+          .set(update)
+          .then(() => {
+            this.attFornecedorObj = {}
+            this.isEdit = ''
+            this.canEdit = ''
+          })
       }
     },
     getItens(index) {
+      this.obDialog = false
+      this.showAllDialog = false
       this.fornecedorItems = []
       this.canEdit = index
       this.show = false
       this.limit = false
-      for(const fornecedor in this.fornecedoresItems) {
+      for (const fornecedor in this.fornecedoresItems) {
         if (fornecedor === index) {
           this.show = true
-          for(const item in this.fornecedoresItems[fornecedor]) {
+          for (const item in this.fornecedoresItems[fornecedor]) {
             if (this.fornecedorItems.length < 3) {
               this.fornecedoresItems[fornecedor][item].id = item
-              this.fornecedorItems.push(this.fornecedoresItems[fornecedor][item])
+              this.fornecedorItems.push(
+                this.fornecedoresItems[fornecedor][item]
+              )
             } else {
               this.limit = true
             }
@@ -411,39 +433,66 @@ export default {
     addItem(id) {
       if (!this.isAdd) {
         this.isAdd = true
-        for(const i in this.estoque) {
+        for (const i in this.estoque) {
           this.estoqueItems.push(this.estoque[i].name)
         }
       } else {
         const item = this.newItem
         item.fornecedor_id = id
-        database.child('fornecedor-item/' + id).push().set(item).then(() => {
-          this.newItem = {}
-          this.isAdd = false
-          this.getItens(id)
-        })
+        database
+          .child('fornecedor-item/' + id)
+          .push()
+          .set(item)
+          .then(() => {
+            this.newItem = {}
+            this.isAdd = false
+            this.getItens(id)
+          })
       }
     },
     attItem(fornId, arrayIndex, item) {
-      if(this.isEditItem !== arrayIndex) {
+      if (this.isEditItem !== arrayIndex) {
         this.isEditItem = arrayIndex
         this.attItemObj = item
-        for(const i in this.estoque) {
+        for (const i in this.estoque) {
           this.estoqueItems.push(this.estoque[i].name)
         }
       } else {
         const itemId = item.id
         const update = this.attItemObj
         delete update.id
-        database.child('fornecedor-item/' + fornId + '/' + itemId).set(update).then(() => {
-          this.attItemObj = {}
-          this.isEditItem = ''
-        })
+        database
+          .child('fornecedor-item/' + fornId + '/' + itemId)
+          .set(update)
+          .then(() => {
+            this.attItemObj = {}
+            this.isEditItem = ''
+          })
       }
     },
     setData(data) {
       this.newItem.data = data.split(' ')[0].split('-').reverse().join('/') /*eslint-disable-line*/
     },
+    showOb(fornId, id) {
+      let selected = {}
+      firebase
+        .database()
+        .ref('fornecedor-item/' + fornId + '/' + id)
+        .on('value', (snap) => (selected = snap.val()))
+      this.obDialog = true
+      this.showAllDialog = false
+      this.obItem = selected
+    },
+    showAll(fornId) {
+      let selected = {}
+      firebase
+        .database()
+        .ref('fornecedor-item/' + fornId)
+        .on('value', (snap) => (selected = snap.val()))
+      this.showAllDialog = true
+      this.obDialog = false
+      this.ShowAllItems = selected
+    }
   }
 }
 </script>
@@ -583,24 +632,12 @@ export default {
   font-size: 30px;
   margin-top: 15px;
 }
-.fornecedor-itens-all {
-  width: 80%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 10px;
-}
 .btn-section {
   padding-bottom: 30px;
   padding-right: 30px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-}
-.ob-info {
-  display: flex;
-  flex-flow: column;
-  width: 90%;
 }
 
 @media screen and (max-width: 1024px) {

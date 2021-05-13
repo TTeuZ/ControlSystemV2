@@ -50,6 +50,10 @@ export default {
       type: Object,
       required: true
     },
+    fornItemsRes: {
+      type: Object,
+      required: true
+    },
     show: {
       type: Boolean,
       required: true
@@ -60,7 +64,6 @@ export default {
       obItem: {},
       showOb: false,
       searchItem: '',
-      fornItemsUti: this.fornItems
     }
   },
   methods: {
@@ -70,14 +73,14 @@ export default {
     },
     filterItens() {
       this.showOb = false
-      for(const item in this.fornItems) {
-        if (!this.fornItemsUti[item].nome.toLowerCase().includes(this.searchItem.toLowerCase())) {
-          console.log(this.fornItemsUti[item].nome.toLowerCase())
-          console.log(item)
-          delete this.fornItemsUti[item]
+      let searchedItems = {}
+      this.fornItems = this.fornItemsRes
+      for(const i in this.fornItems) {
+        if(this.fornItems[i].nome.toLowerCase().includes(this.searchItem.toLowerCase())) {
+          searchedItems[i] = this.fornItems[i]
         }
       }
-      return this.fornItemsUti
+      this.fornItems = searchedItems
     },
   }
 }

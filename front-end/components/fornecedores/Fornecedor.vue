@@ -264,7 +264,7 @@
       </div>
     </v-expansion-panels>
     <ObDialog :ob-dialog="obDialog" :ob-item="obItem" />
-    <ShowAllDialog :forn-items="ShowAllItems" :show="showAllDialog" />
+    <ShowAllDialog :forn-items="ShowAllItems" :forn-items-res="ShowAllItemsRes" :show="showAllDialog" />
   </div>
 </template>
 
@@ -291,6 +291,7 @@ export default {
       obItem: {},
       showAllDialog: false,
       ShowAllItems: {},
+      ShowAllItemsRes: {},
       fornecedores: {},
       fornecedoresRes: {},
       fornItens: {},
@@ -336,6 +337,8 @@ export default {
   },
   methods: {
     filterFornecedores() {
+      this.obDialog = false
+      this.showAllDialog = false
       let items = {}
       let searchedFornecedores = {}
       this.fornecedores = this.fornecedoresRes
@@ -489,6 +492,7 @@ export default {
       this.showAllDialog = true
       this.obDialog = false
       this.ShowAllItems = selected
+      this.ShowAllItemsRes = selected
     }
   }
 }

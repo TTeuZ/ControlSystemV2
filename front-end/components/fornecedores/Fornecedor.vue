@@ -125,11 +125,7 @@
                         v-on="on"
                       ></v-text-field>
                     </template>
-                    <v-date-picker v-model="date" no-title scrollable>
-                      <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="setData(date)">
-                        OK
-                      </v-btn>
+                    <v-date-picker @change="setData(date), (menu = false)" v-model="date" no-title scrollable>
                     </v-date-picker>
                   </v-menu>
                 </div>
@@ -191,7 +187,6 @@
                 <v-menu
                   ref="menu"
                   v-model="menu"
-                  :close-on-content-click="false"
                   transition="scale-transition"
                   offset-y
                   min-width="auto"
@@ -206,15 +201,7 @@
                       v-on="on"
                     ></v-text-field>
                   </template>
-                  <v-date-picker v-model="date" no-title scrollable>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="setData(date), (menu = false)"
-                    >
-                      OK
-                    </v-btn>
+                  <v-date-picker @change="setData(date), (menu = false)" v-model="date" no-title scrollable>
                   </v-date-picker>
                 </v-menu>
               </div>
@@ -305,6 +292,7 @@ export default {
       showAllDialog: false,
       ShowAllItems: {},
       fornecedores: {},
+      fornecedoresRes: {},
       fornItens: {},
       estoque: {},
       estoqueItems: [],
@@ -340,6 +328,7 @@ export default {
   mounted() {
     const forn = database.child('fornecedor')
     forn.on('value', (snap) => (this.fornecedores = snap.val()))
+    forn.on('value', (snap) => (this.fornecedoresRes = snap.val()))
     const data = database.child('estoque-item')
     data.on('value', (snap) => (this.estoque = snap.val()))
     const fornItens = database.child('fornecedor-item')
@@ -347,25 +336,23 @@ export default {
   },
   methods: {
     filterFornecedores() {
-      const count = 0
-      const fornecedoresId = []
-      const fornUti = this.fornecedores
-      // for(const fornecedor in this.fornecedoresItems) {
-      //   for(const fornecedorItems in this.fornecedoresItems[fornecedor]) {
-      //     if (this.fornecedoresItems[fornecedor][fornecedorItems].nome.toLowerCase().includes(this.search.toLowerCase())) {
-
-      //     }
-      //   }
-      // }
-      // fornecedoresId = fornecedoresId.filter((atual, posterior) => {
-      //   return fornecedoresId.indexOf(atual) === posterior
-      // })
-      // while(count <= fornecedoresId.length - 1) {
-      //   for (const forn in fornUti) {
-      //   }
-      //   count += 1
-      // }
-      console.log(fornUti)
+      let items = {}
+      let searchedFornecedores = {}
+      this.fornecedores = this.fornecedoresRes
+      // Pega todos os itens de todos os fornecedores e coloca no mesmo OBJ
+      for(const fornecedor in this.fornecedoresItems) {
+        let keys = Object.keys(this.fornecedoresItems[fornecedor])
+        for(const key in keys) {
+          items[keys[key]] = this.fornecedoresItems[fornecedor][keys[key]]
+        }
+      }
+      // armazena todos os fornecedores que possuem aquele item
+      for(const item in items) {
+        if (items[item].nome.toLowerCase().includes(this.search.toLowerCase())) {
+          searchedFornecedores[items[item].fornecedor_id] = this.fornecedores[items[item].fornecedor_id]
+        }
+      }
+      this.fornecedores = searchedFornecedores
     },
     createFornecedor() {
       if (!this.isCreate) {
@@ -417,11 +404,12 @@ export default {
       for (const fornecedor in this.fornecedoresItems) {
         if (fornecedor === index) {
           this.show = true
-          for (const item in this.fornecedoresItems[fornecedor]) {
+          const reverseKeys = Object.keys(this.fornecedoresItems[fornecedor]).reverse()
+          for (const item in Object.keys(this.fornecedoresItems[fornecedor]).reverse()) {
             if (this.fornecedorItems.length < 3) {
-              this.fornecedoresItems[fornecedor][item].id = item
+              this.fornecedoresItems[fornecedor][reverseKeys[item]].id = reverseKeys[item]
               this.fornecedorItems.push(
-                this.fornecedoresItems[fornecedor][item]
+                this.fornecedoresItems[fornecedor][reverseKeys[item]]
               )
             } else {
               this.limit = true
@@ -451,6 +439,8 @@ export default {
       }
     },
     attItem(fornId, arrayIndex, item) {
+      this.obDialog = false
+      this.showAllDialog = false
       if (this.isEditItem !== arrayIndex) {
         this.isEditItem = arrayIndex
         this.attItemObj = item
@@ -472,6 +462,7 @@ export default {
     },
     setData(data) {
       this.newItem.data = data.split(' ')[0].split('-').reverse().join('/') /*eslint-disable-line*/
+      this.attItemObj.data = data.split(' ')[0].split('-').reverse().join('/') /*eslint-disable-line*/
     },
     showOb(fornId, id) {
       let selected = {}
@@ -485,10 +476,16 @@ export default {
     },
     showAll(fornId) {
       let selected = {}
+      let newObj = {}
       firebase
         .database()
         .ref('fornecedor-item/' + fornId)
         .on('value', (snap) => (selected = snap.val()))
+      const reverseKeys = Object.keys(selected).reverse()
+      for(const i in reverseKeys) {
+        newObj[reverseKeys[i]] = selected[reverseKeys[i]]
+      }
+      selected = newObj
       this.showAllDialog = true
       this.obDialog = false
       this.ShowAllItems = selected

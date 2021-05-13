@@ -11,7 +11,7 @@
             OBSERVAÇÃO
           </span>
           <div v-if="obItem !== {}" class="ob-info">
-            <div style="display:flex; justify-content:space-between;">
+            <div class="pb-5" style="display:flex; justify-content:space-between;">
               <span class="text"> Item: {{ obItem.nome }} </span>
               <span class="text"> Quantidade: {{ obItem.quantidade }} </span>
               <span class="text"> Valor: {{ obItem.valor }} </span>

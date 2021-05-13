@@ -17,7 +17,7 @@
             ></v-text-field>
           </div>
           <div
-            v-for="item in fornItemsUti"
+            v-for="item in fornItems"
             :key="item"
             class="fornecedor-itens-all"
             @click="openOb(item)"
@@ -70,7 +70,6 @@ export default {
     },
     filterItens() {
       this.showOb = false
-    //   this.fornItems = this.fornItemsRes
       for(const item in this.fornItems) {
         if (!this.fornItemsUti[item].nome.toLowerCase().includes(this.searchItem.toLowerCase())) {
           console.log(this.fornItemsUti[item].nome.toLowerCase())
